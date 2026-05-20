@@ -63,45 +63,4 @@ public:
         return f(l).first - k * l;
     }
 };
-
-// Time:  O(n * k)
-// Space: O(n)
-// prefix sum, dp, convex hull trick
-class Solution2 {
-public:
-    long long minPartitionScore(vector<int>& nums, int k) {
-        static const int64_t INF = numeric_limits<int64_t>::max();
-
-        const auto& check = [](const auto& l1, const auto& l2, const auto& l3) {
-            return (get<1>(l2) - get<1>(l1)) * (get<0>(l2) - get<0>(l3)) < (get<1>(l3) - get<1>(l2)) * (get<0>(l1) - get<0>(l2));
-        };
-
-        vector<int64_t> prefix(size(nums) + 1);
-        for (int i = 0; i < size(nums); ++i) {
-            prefix[i + 1] = prefix[i] + nums[i];
-        }
-        vector<int64_t> dp(size(nums) + 1, INF);
-        dp[0] = 0;
-        for (int j = 0; j < k; ++j) {
-            vector<int64_t> new_dp(size(nums) + 1, INF);
-            deque<pair<int64_t, int64_t>> hull;
-            for (int i = j; i < static_cast<int>(size(nums)); ++i) {
-                if (dp[i] != INF) {
-                    const auto& x = prefix[i];
-                    const auto& line = pair(-x, dp[i] + (x * x - x) / 2);
-                    while (size(hull) >= 2 && !check(hull[size(hull) - 2], hull[size(hull) - 1], line)) {
-                        hull.pop_back();
-                    }
-                    hull.emplace_back(line);
-                }
-                const auto& x = prefix[i + 1];
-                while (size(hull) >= 2 && get<0>(hull[0]) * x + get<1>(hull[0]) >= get<0>(hull[1]) * x + get<1>(hull[1])) {
-                    hull.pop_front();
-                }
-                new_dp[i + 1] = get<0>(hull[0]) * x + get<1>(hull[0]) + (x * x + x) / 2;     
-            }
-            dp = move(new_dp);
-        }
-        return dp.back();
-    }
-};
+                  
