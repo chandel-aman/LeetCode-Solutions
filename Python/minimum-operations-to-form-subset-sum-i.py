@@ -1,7 +1,7 @@
 # Time:  O(n * s * (logs + logr))
 # Space: O(s)
 
-# dp
+# knapsack dp
 class Solution(object):
     def minOperations(self, nums, sum):
         """
@@ -13,7 +13,7 @@ class Solution(object):
         dp = [INF]*(sum+1)
         dp[0] = 0
         for x in nums:
-            for i in reversed(xrange(1, sum+1)):
+            for i in reversed(xrange(1, len(dp))):
                 nx, c = x, 0
                 while i-nx >= 0:
                     if dp[i-nx]+c < dp[i]:
@@ -32,7 +32,7 @@ class Solution(object):
 
 # Time:  O(n * s * (logs + logr))
 # Space: O(s + logs + logr)
-# dp
+# knapsack dp
 class Solution2(object):
     def minOperations(self, nums, sum):
         """
@@ -58,7 +58,7 @@ class Solution2(object):
                 c += 1
             new_dp = dp[:]
             for nx, c in candidates:
-                for i in reversed(xrange(nx, sum+1)):
+                for i in xrange(nx, len(dp)):
                     if dp[i-nx]+c < new_dp[i]:
                         new_dp[i] = dp[i-nx]+c
             dp = new_dp
